@@ -66,17 +66,20 @@
 </div>
 
 <!-- ═══════ LOGIN OVERLAY ═══════ -->
-<div id="login-overlay" class="login-overlay fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-samsung-dark to-samsung-navy p-4" aria-modal="true" role="dialog" aria-label="Sign in to BalancePoint">
+<div id="login-overlay" class="login-overlay fixed inset-0 z-50 flex items-center justify-center bg-[linear-gradient(to_bottom_right,#050814,#0b1329)] p-4" aria-modal="true" role="dialog" aria-label="Sign in to BalancePoint">
   <!-- Dynamic Orbs for Background -->
   <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-    <div class="absolute top-[20%] left-[15%] w-64 h-64 bg-samsung-accent/20 rounded-full blur-[80px] animate-pulse"></div>
-    <div class="absolute bottom-[20%] right-[15%] w-80 h-80 bg-purple-500/10 rounded-full blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
+    <div class="absolute top-[10%] left-[10%] w-72 h-72 bg-emerald-500/10 rounded-full blur-[100px] animate-pulse" style="animation-duration: 4s;"></div>
+    <div class="absolute bottom-[10%] right-[10%] w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] animate-pulse" style="animation-duration: 5s; animation-delay: 2s;"></div>
   </div>
 
-  <div class="login-card relative w-full max-w-md backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl flex flex-col items-center text-center">
+  <div class="login-card relative w-full max-w-md backdrop-blur-2xl bg-slate-900/40 border border-white/10 rounded-[2.5rem] p-8 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] flex flex-col items-center text-center overflow-hidden">
+    <!-- Inner border glow -->
+    <div class="absolute inset-0 rounded-[2.5rem] pointer-events-none border border-white/5 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)]"></div>
+    
     <!-- Brand -->
-    <div class="login-brand mb-8 flex flex-col items-center">
-      <div class="login-flame mb-4 animate-pulse-glow" aria-hidden="true">
+    <div class="login-brand mb-8 flex flex-col items-center relative z-10">
+      <div class="login-flame mb-4 animate-pulse-glow shadow-lg shadow-amber-500/20 rounded-full" aria-hidden="true">
         <svg width="60" height="76" viewBox="0 0 60 80" fill="none">
           <defs>
             <linearGradient id="lf-grad-new" x1="0" y1="1" x2="0" y2="0">
@@ -89,29 +92,29 @@
           <path d="M30 24C30 24 40 34 40 46C40 54 36 62 30 66C24 62 20 54 20 46C20 34 30 24 30 24Z" fill="#eff6ff" opacity="0.6"/>
         </svg>
       </div>
-      <h1 class="login-title text-3xl font-semibold text-white tracking-tight mb-2">BalancePoint</h1>
-      <p class="login-tagline text-sm text-gray-400 font-medium">Your intelligent senior health companion</p>
+      <h1 class="login-title tracking-tight text-white font-semibold text-2xl mb-1">BalancePoint</h1>
+      <p class="login-tagline text-xs text-gray-400 font-medium tracking-wide uppercase">Intelligent Senior Health & Fall Prevention</p>
     </div>
 
     <!-- Features teaser -->
-    <div class="login-features w-full grid grid-cols-2 gap-4 mb-10 text-left">
-      <div class="lf-item flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/5 shadow-inner">
-        <span class="lf-icon text-xl">📡</span><span class="text-xs text-gray-300 font-medium leading-tight">Live bed<br/>telemetry</span>
+    <div class="login-features w-full flex flex-wrap justify-center gap-2 mb-10 relative z-10">
+      <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 backdrop-blur-md">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-[10px] text-gray-300 font-medium uppercase tracking-wider">Real-Time Telemetry</span>
       </div>
-      <div class="lf-item flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/5 shadow-inner">
-        <span class="lf-icon text-xl">❤️</span><span class="text-xs text-gray-300 font-medium leading-tight">Live vitals<br/>monitoring</span>
+      <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 backdrop-blur-md">
+        <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" style="animation-delay: 0.5s;"></span>
+        <span class="text-[10px] text-gray-300 font-medium uppercase tracking-wider">15s Stability Protocol</span>
       </div>
-      <div class="lf-item flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/5 shadow-inner">
-        <span class="lf-icon text-xl">🎬</span><span class="text-xs text-gray-300 font-medium leading-tight">Guided fitness<br/>videos</span>
-      </div>
-      <div class="lf-item flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/5 shadow-inner">
-        <span class="lf-icon text-xl">🔒</span><span class="text-xs text-gray-300 font-medium leading-tight">Secure Firebase<br/>sync</span>
+      <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 backdrop-blur-md">
+        <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" style="animation-delay: 1s;"></span>
+        <span class="text-[10px] text-gray-300 font-medium uppercase tracking-wider">Encrypted Cloud Sync</span>
       </div>
     </div>
 
     <!-- Sign-In Button -->
-    <button class="google-signin-btn bg-white text-gray-900 font-medium rounded-full px-6 py-3 flex items-center justify-center gap-3 transition-all duration-300 hover:scale-[1.02] shadow-[0_4px_14px_0_rgba(255,255,255,0.15)] w-full max-w-[280px]" id="google-signin-btn" aria-label="Sign in with Google">
-      <span id="login-spinner" class="google-spinner animate-spin w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full" style="display:none" aria-hidden="true"></span>
+    <button class="google-signin-btn bg-white text-slate-900 font-medium rounded-full py-3.5 px-6 flex items-center justify-center gap-3 shadow-xl transition-all duration-300 hover:bg-slate-100 hover:scale-[1.01] w-full max-w-[280px] relative z-10" id="google-signin-btn" aria-label="Sign in with Google">
+      <span id="login-spinner" class="google-spinner animate-spin w-5 h-5 border-2 border-slate-900 border-t-transparent rounded-full" style="display:none" aria-hidden="true"></span>
       <svg class="google-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -121,8 +124,11 @@
       <span class="google-btn-text">Sign in with Google</span>
     </button>
 
-    <div id="login-error" class="login-error mt-4 text-red-400 text-sm font-medium bg-red-400/10 px-4 py-2 rounded-lg" role="alert" style="display:none"></div>
-    <p class="login-privacy mt-8 text-xs text-gray-500">By signing in you agree to our <a href="#" class="text-samsung-accent hover:underline">Privacy Policy</a>. Health data is encrypted and never shared.</p>
+    <div id="login-error" class="login-error mt-4 text-red-400 text-sm font-medium bg-red-400/10 px-4 py-2 rounded-lg relative z-10" role="alert" style="display:none"></div>
+    <div class="mt-8 relative z-10 flex flex-col items-center gap-1 opacity-70">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <p class="text-[10px] text-gray-400 text-center uppercase tracking-wider">End-to-end encrypted medical sync.<br>HIPAA compliant architecture.</p>
+    </div>
   </div>
 </div>
 
@@ -275,32 +281,48 @@
       <section class="bento-grid grid grid-cols-2 md:grid-cols-4 gap-4 p-4" id="bento-grid">
 
         <!-- MEDICATIONS -->
-        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-medications" id="card-medications" data-modal="modal-medications" role="button" tabindex="0" aria-label="Medications">
-          <div class="card-icon-wrap med-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl overflow-hidden card-medications border border-white/5 shadow-[0_8px_20px_rgba(0,0,0,0.5)] group" id="card-medications" data-modal="modal-medications" role="button" tabindex="0" aria-label="Medications">
+          <div class="absolute inset-0 z-0">
+            <img src="assets/medications.png" alt="Medications" class="w-full h-full object-cover opacity-30 group-hover:opacity-40 transition-opacity duration-300">
+            <div class="absolute inset-0 bg-gradient-to-t from-samsung-card via-samsung-card/80 to-transparent"></div>
           </div>
-          <div class="card-content">
-            <h2 class="card-title">Medications <span class="badge-count" id="med-count-badge">3</span></h2>
-            <p class="card-sub" id="med-card-sub">1 due today</p>
-            <div class="med-pills-row">
-              <span class="med-pill taken">Vitamin D3</span>
-              <span class="med-pill pending">Omega-3</span>
+          <div class="relative z-10 p-6 flex flex-col h-full justify-between">
+            <div class="flex justify-between items-start">
+              <div class="w-10 h-10 rounded-full bg-samsung-accent/20 flex items-center justify-center text-samsung-accent">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              </div>
+              <span class="badge-count bg-samsung-accent text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg" id="med-count-badge">3</span>
+            </div>
+            <div class="mt-8">
+              <h2 class="text-xl font-bold text-white mb-1">Medications</h2>
+              <p class="text-sm text-samsung-accent font-medium mb-4" id="med-card-sub">1 due today</p>
+              <div class="flex gap-2">
+                <span class="text-xs font-semibold px-2 py-1 bg-green-500/20 text-green-400 rounded-md border border-green-500/20">Vitamin D3</span>
+                <span class="text-xs font-semibold px-2 py-1 bg-amber-500/20 text-amber-400 rounded-md border border-amber-500/20">Omega-3</span>
+              </div>
             </div>
           </div>
-          <div class="card-chevron">›</div>
         </article>
 
-        <!-- HEALTH RECORDS -->
-        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-records" id="card-records" data-modal="modal-records" role="button" tabindex="0" aria-label="Health Records">
-          <div class="card-icon-wrap rec-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <!-- HEALTH RECORDS / HISTORY -->
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl overflow-hidden card-records border border-white/5 shadow-[0_8px_20px_rgba(0,0,0,0.5)] group" id="card-history" data-modal="modal-records" role="button" tabindex="0" aria-label="Health History">
+          <div class="absolute inset-0 z-0">
+            <img src="assets/history.png" alt="History" class="w-full h-full object-cover opacity-30 group-hover:opacity-40 transition-opacity duration-300">
+            <div class="absolute inset-0 bg-gradient-to-t from-samsung-card via-samsung-card/80 to-transparent"></div>
           </div>
-          <div class="card-content">
-            <h2 class="card-title">Health Records</h2>
-            <p class="card-sub">Updated 3 days ago</p>
+          <div class="relative z-10 p-6 flex flex-col h-full justify-between">
+            <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div class="mt-8">
+              <h2 class="text-xl font-bold text-white mb-1">Health History</h2>
+              <p class="text-sm text-gray-400 mb-4">Updated 3 days ago</p>
+              <div class="flex gap-2">
+                <span class="text-xs font-semibold px-2 py-1 bg-white/10 text-white rounded-md border border-white/10">Blood Test</span>
+                <span class="text-xs font-semibold px-2 py-1 bg-white/10 text-white rounded-md border border-white/10">ECG</span>
+              </div>
+            </div>
           </div>
-          <div class="rec-tags"><span class="rec-tag">Blood Test</span><span class="rec-tag">ECG</span></div>
-          <div class="card-chevron">›</div>
         </article>
 
         <!-- STEPS -->
@@ -380,18 +402,23 @@
         </article>
 
         <!-- FITNESS -->
-        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-fitness" id="card-fitness" data-modal="modal-fitness" role="button" tabindex="0" aria-label="Fitness">
-          <div class="card-icon-wrap fitness-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
-          <h2 class="card-title">Fitness</h2>
-          <div class="fitness-stats">
-            <div class="fs-item"><span class="fs-val">5</span><span class="fs-label">workouts this week</span></div>
-            <div class="fs-divider"></div>
-            <div class="fs-item"><span class="fs-val">3.2h</span><span class="fs-label">total duration</span></div>
-            <div class="fs-divider"></div>
-            <div class="fs-item"><span class="fs-val">1,240</span><span class="fs-label">kcal burned</span></div>
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl overflow-hidden card-fitness border border-white/5 shadow-[0_8px_20px_rgba(0,0,0,0.5)] group" id="card-fitness" data-modal="modal-fitness" role="button" tabindex="0" aria-label="Fitness">
+          <div class="absolute inset-0 z-0">
+            <img src="assets/fitness.png" alt="Fitness" class="w-full h-full object-cover opacity-30 group-hover:opacity-40 transition-opacity duration-300">
+            <div class="absolute inset-0 bg-gradient-to-t from-samsung-card via-samsung-card/80 to-transparent"></div>
           </div>
-          <div class="week-dots" aria-label="Workout days this week">
-            <span class="wd active">M</span><span class="wd active">T</span><span class="wd">W</span><span class="wd active">T</span><span class="wd active">F</span><span class="wd active">S</span><span class="wd">S</span>
+          <div class="relative z-10 p-6 flex flex-col h-full justify-between">
+            <div class="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            </div>
+            <div class="mt-8">
+              <h2 class="text-xl font-bold text-white mb-1">Fitness</h2>
+              <p class="text-sm text-gray-400 mb-4">5 workouts this week</p>
+              <div class="flex gap-2">
+                <span class="text-xs font-semibold px-2 py-1 bg-white/10 text-white rounded-md border border-white/10">3.2h</span>
+                <span class="text-xs font-semibold px-2 py-1 bg-white/10 text-white rounded-md border border-white/10">1,240 kcal</span>
+              </div>
+            </div>
           </div>
         </article>
 
@@ -411,20 +438,24 @@
         </article>
 
         <!-- SLEEP -->
-        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-sleep" id="card-sleep" data-modal="modal-sleep" role="button" tabindex="0" aria-label="Sleep">
-          <div class="card-icon-wrap sleep-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
-          <h2 class="card-title">Sleep</h2>
-          <div class="sleep-time">7h 42m</div>
-          <div class="sleep-quality-row"><span class="sq-label">Quality</span><span class="sq-badge good">Good</span></div>
-          <div class="sleep-phases">
-            <div class="sp-bar awake" style="width:8%"></div>
-            <div class="sp-bar rem" style="width:22%"></div>
-            <div class="sp-bar light" style="width:40%"></div>
-            <div class="sp-bar deep" style="width:30%"></div>
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl overflow-hidden card-sleep border border-white/5 shadow-[0_8px_20px_rgba(0,0,0,0.5)] group" id="card-sleep" data-modal="modal-sleep" role="button" tabindex="0" aria-label="Sleep">
+          <div class="absolute inset-0 z-0">
+            <img src="assets/sleep.png" alt="Sleep" class="w-full h-full object-cover opacity-30 group-hover:opacity-40 transition-opacity duration-300">
+            <div class="absolute inset-0 bg-gradient-to-t from-samsung-card via-samsung-card/80 to-transparent"></div>
           </div>
-          <div class="sleep-legend">
-            <span><i class="dot awake"></i>Awake</span><span><i class="dot rem"></i>REM</span>
-            <span><i class="dot light"></i>Light</span><span><i class="dot deep"></i>Deep</span>
+          <div class="relative z-10 p-6 flex flex-col h-full justify-between">
+            <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </div>
+            <div class="mt-8">
+              <h2 class="text-xl font-bold text-white mb-1">Sleep</h2>
+              <div class="flex items-baseline gap-2 mb-4">
+                <span class="text-3xl font-bold text-white tracking-tight">7h 42m</span>
+              </div>
+              <div class="flex gap-2">
+                <span class="text-xs font-semibold px-2 py-1 bg-indigo-500/20 text-indigo-400 rounded-md border border-indigo-500/20">Quality: Good</span>
+              </div>
+            </div>
           </div>
         </article>
 
@@ -475,32 +506,38 @@
         </article>
 
         <!-- BED TELEMETRY -->
-        <article class="card col-span-2 relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-telemetry flex flex-col justify-between" id="card-telemetry" data-modal="modal-telemetry" role="button" tabindex="0" aria-label="Bed telemetry">
-          <div class="flex justify-between items-start mb-6">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-samsung-accent/20 flex items-center justify-center text-samsung-accent">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 15z"/></svg>
+        <article class="card col-span-2 relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl overflow-hidden card-telemetry flex flex-col justify-between border border-white/5 shadow-[0_8px_20px_rgba(0,0,0,0.5)] group" id="card-telemetry" data-modal="modal-telemetry" role="button" tabindex="0" aria-label="Bed telemetry">
+          <div class="absolute inset-0 z-0">
+            <img src="assets/telemetry.png" alt="Telemetry" class="w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-300">
+            <div class="absolute inset-0 bg-gradient-to-t from-samsung-card via-samsung-card/80 to-transparent"></div>
+          </div>
+          <div class="relative z-10 p-6 flex flex-col h-full justify-between">
+            <div class="flex justify-between items-start mb-6">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-samsung-accent/20 flex items-center justify-center text-samsung-accent">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 15z"/></svg>
+                </div>
+                <div>
+                  <h2 class="text-lg font-semibold text-white">Bed Telemetry</h2>
+                  <p class="text-xs text-gray-400">Live ESP32 Matrix</p>
+                </div>
               </div>
-              <div>
-                <h2 class="text-lg font-semibold text-white">Bed Telemetry</h2>
-                <p class="text-xs text-gray-400">Live ESP32 Matrix</p>
+              
+              <div class="tof-card-status-wrap flex items-center gap-2 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20 backdrop-blur-sm">
+                <span class="tof-card-dot w-2 h-2 rounded-full bg-green-400 shadow-[0_0_8px_#4ade80] animate-pulse"></span>
+                <span id="tof-card-status" class="tof-card-status-text text-xs font-medium text-green-400">Bed Occupied</span>
               </div>
             </div>
             
-            <div class="tof-card-status-wrap flex items-center gap-2 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
-              <span class="tof-card-dot w-2 h-2 rounded-full bg-green-400 shadow-[0_0_8px_#4ade80] animate-pulse"></span>
-              <span id="tof-card-status" class="tof-card-status-text text-xs font-medium text-green-400">Bed Occupied</span>
-            </div>
-          </div>
-          
-          <div class="flex-1 flex items-center justify-center py-4 relative">
-            <!-- Glow rings around matrix -->
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div class="w-32 h-32 rounded-full border border-samsung-accent/10 animate-ping" style="animation-duration: 3s;"></div>
-              <div class="absolute w-24 h-24 rounded-full border border-samsung-accent/20 animate-ping" style="animation-duration: 2s; animation-delay: 0.5s;"></div>
-            </div>
-            <div class="fsr-card-grid w-full h-24 grid grid-cols-4 grid-rows-4 gap-1 z-10" id="fsr-card-grid" aria-hidden="true">
-              <!-- Rendered by telemetry.js -->
+            <div class="flex-1 flex items-center justify-center py-4 relative">
+              <!-- Glow rings around matrix -->
+              <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div class="w-32 h-32 rounded-full border border-samsung-accent/10 animate-ping" style="animation-duration: 3s;"></div>
+                <div class="absolute w-24 h-24 rounded-full border border-samsung-accent/20 animate-ping" style="animation-duration: 2s; animation-delay: 0.5s;"></div>
+              </div>
+              <div class="fsr-card-grid w-full h-24 grid grid-cols-4 grid-rows-4 gap-1 z-10" id="fsr-card-grid" aria-hidden="true">
+                <!-- Rendered by telemetry.js -->
+              </div>
             </div>
           </div>
         </article>
@@ -899,6 +936,19 @@
 </div>
 
 <!-- ═══ MAIN MODULE ENTRY POINT ═══ -->
-<script type="module" src="app.js"></script>
+<script type="module" src="js/firebase-init.js"></script>
+<script type="module" src="js/auth.js"></script>
+<script type="module" src="js/dashboard.js"></script>
+<script type="module" src="js/history.js"></script>
+<script type="module" src="js/fitness.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('SW registered', reg))
+        .catch(err => console.log('SW failed', err));
+    });
+  }
+</script>
 </body>
 </html>

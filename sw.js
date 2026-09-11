@@ -8,15 +8,20 @@ const CACHE_URLS = [
   './',
   './index.html',
   './style.css',
-  './app.js',
   './js/firebase-init.js',
   './js/auth.js',
+  './js/dashboard.js',
+  './js/history.js',
+  './js/fitness.js',
   './js/charts.js',
   './js/telemetry.js',
   './js/medications.js',
   './js/widgets.js',
-  './soundwave.png',
-  './vascular.png',
+  './assets/medications.png',
+  './assets/history.png',
+  './assets/sleep.png',
+  './assets/fitness.png',
+  './assets/telemetry.png',
   './manifest.json'
 ];
 
