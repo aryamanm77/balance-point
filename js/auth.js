@@ -47,9 +47,15 @@ export function getCurrentUser() { return _currentUser; }
 
 /* ── Initialise auth observer ── */
 export function initAuth() {
-  getRedirectResult(auth).catch(err => {
-    handleAuthError(err);
-  });
+  window.signInWithGoogle = signInWithGoogle;
+
+  try {
+    getRedirectResult(auth).catch(err => {
+      handleAuthError(err);
+    });
+  } catch(e) {
+    console.error("Redirect check failed:", e);
+  }
 
   onAuthStateChanged(auth, async user => {
     hideLoading();
