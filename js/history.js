@@ -1,17 +1,12 @@
-/* ================================================================
-   history.js — Nightly History Log (formerly records)
-   ================================================================ */
-
-export class HistoryLogger {
+class HistoryLogger {
   constructor() {
-    this.logs = JSON.parse(localStorage.getItem('bp_history')) || [];
+    this.logs = JSON.parse(localStorage.getItem("bp_history")) || [];
     if (this.logs.length === 0) {
       this.generateMockHistory();
     }
   }
-
   generateMockHistory() {
-    const today = new Date();
+    const today = /* @__PURE__ */ new Date();
     for (let i = 1; i <= 7; i++) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
@@ -24,18 +19,18 @@ export class HistoryLogger {
     }
     this.save();
   }
-
   save() {
-    localStorage.setItem('bp_history', JSON.stringify(this.logs));
+    localStorage.setItem("bp_history", JSON.stringify(this.logs));
   }
-
   getLogs() {
     return this.logs;
   }
 }
-
-export function initHistory() {
+function initHistory() {
   const historyLogger = new HistoryLogger();
   console.log("Nightly History initialized", historyLogger.getLogs());
-  // In a full implementation, this would render to a modal or history view
 }
+export {
+  HistoryLogger,
+  initHistory
+};
