@@ -81,7 +81,7 @@ async function signInWithGoogle() {
   setSignInLoading(true);
   clearLoginError();
   try {
-    await signInWithRedirect(auth, provider);
+    await signInWithPopup(auth, provider);
   } catch (err) {
     setSignInLoading(false);
     handleAuthError(err);
