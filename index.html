@@ -48,44 +48,6 @@
 </head>
 <body class="bg-samsung-dark text-gray-100 font-sans antialiased overflow-hidden selection:bg-samsung-accent/30">
 
-<!-- ═══════ LOADING SCREEN ═══════ -->
-<div id="loading-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[linear-gradient(to_bottom_right,#050814,#0b1329)] transition-opacity duration-500" aria-live="polite" aria-busy="true">
-  <!-- Dynamic Orbs for Background (matching login) -->
-  <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-    <div class="absolute top-[30%] left-[20%] w-64 h-64 bg-emerald-500/10 rounded-full blur-[100px] animate-pulse"></div>
-    <div class="absolute bottom-[30%] right-[20%] w-80 h-80 bg-indigo-500/10 rounded-full blur-[120px] animate-pulse" style="animation-delay: 1.5s;"></div>
-  </div>
-
-  <div class="relative z-10 flex flex-col items-center">
-    <!-- Glowing Brand Icon -->
-    <div class="mb-6 animate-pulse-glow shadow-lg shadow-amber-500/20 rounded-full" aria-hidden="true">
-      <svg width="60" height="76" viewBox="0 0 60 80" fill="none">
-        <defs>
-          <linearGradient id="ls-grad-new" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0%" stop-color="#3b82f6"/>
-            <stop offset="60%" stop-color="#60a5fa"/>
-            <stop offset="100%" stop-color="#93c5fd"/>
-          </linearGradient>
-        </defs>
-        <path d="M30 8C30 8 48 22 48 42C48 56 40 68 30 72C20 68 12 56 12 42C12 22 30 8 30 8Z" fill="url(#ls-grad-new)"/>
-        <path d="M30 24C30 24 40 34 40 46C40 54 36 62 30 66C24 62 20 54 20 46C20 34 30 24 30 24Z" fill="#eff6ff" opacity="0.6"/>
-      </svg>
-    </div>
-    
-    <h1 class="tracking-tight text-white font-semibold text-2xl mb-8">BalancePoint</h1>
-
-    <!-- Sleek Loading Bar instead of basic spinner -->
-    <div class="w-48 h-1 bg-white/10 rounded-full overflow-hidden relative">
-      <div class="absolute top-0 left-0 h-full w-1/2 bg-blue-500 rounded-full shadow-[0_0_10px_#3b82f6] animate-[pulse_1.5s_ease-in-out_infinite]" style="animation: loading-bar 1.5s infinite ease-in-out;"></div>
-    </div>
-    <style>
-      @keyframes loading-bar {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(200%); }
-      }
-    </style>
-  </div>
-</div>
 
 <!-- ═══════ LOGIN OVERLAY ═══════ -->
 <div id="login-overlay" class="login-overlay fixed inset-0 z-50 flex items-center justify-center bg-[linear-gradient(to_bottom_right,#050814,#0b1329)] p-4" aria-modal="true" role="dialog" aria-label="Sign in to BalancePoint">
