@@ -421,16 +421,18 @@ function renderVideoLibrary(filter='') {
     );
     if (!vids.length) return;
     html += `
-      <div class="video-section">
-        <div class="video-section-header">
-          <span class="video-cat-icon" style="background:${cat.bg};color:${cat.color}">${cat.icon}</span>
-          <div>
-            <h3 class="video-cat-title" style="color:${cat.color}">${cat.name}</h3>
-            <span class="video-cat-count">${vids.length} video${vids.length>1?'s':''}</span>
+      <div class="video-section mb-8">
+        <div class="video-section-header flex items-center justify-between mb-4 px-4">
+          <div class="flex items-center gap-3">
+            <span class="video-cat-icon flex items-center justify-center w-10 h-10 rounded-xl shadow-lg" style="background:${cat.bg};color:${cat.color}">${cat.icon}</span>
+            <div>
+              <h3 class="video-cat-title text-lg font-bold" style="color:${cat.color}">${cat.name}</h3>
+              <span class="video-cat-count text-xs text-gray-400 font-medium">${vids.length} video${vids.length>1?'s':''}</span>
+            </div>
           </div>
-          <span class="video-see-all">See all ›</span>
+          <span class="video-see-all text-xs font-semibold text-gray-400 hover:text-white cursor-pointer transition-colors">See all ›</span>
         </div>
-        <div class="video-carousel" role="list">
+        <div class="video-carousel flex gap-4 overflow-x-auto pb-6 px-4 snap-x snap-mandatory scrollbar-hide" role="list">
           ${vids.map(v=>buildVideoCard(v,cat)).join('')}
         </div>
       </div>`;
@@ -447,21 +449,21 @@ function renderVideoLibrary(filter='') {
 
 function buildVideoCard(video, cat) {
   const thumbUrl = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
-  const levelClass = video.level==='Beginner'?'level-beginner':video.level==='Intermediate'?'level-intermediate':'level-all';
+  const levelClass = video.level==='Beginner'?'bg-green-500/20 text-green-400':video.level==='Intermediate'?'bg-yellow-500/20 text-yellow-400':'bg-red-500/20 text-red-400';
   return `
-    <div class="video-card" data-id="${video.id}" role="listitem" tabindex="0" aria-label="Play: ${video.title}">
-      <div class="video-thumb-wrap">
-        <img class="video-thumb" src="${thumbUrl}" alt="${video.title}" loading="lazy"
-          onerror="this.style.display='none';this.parentElement.classList.add('thumb-error')"/>
-        <div class="video-play-overlay" aria-hidden="true">
-          <div class="video-play-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg></div>
+    <div class="video-card min-w-[240px] max-w-[240px] snap-center group cursor-pointer relative bg-samsung-card rounded-2xl overflow-hidden border border-white/5 shadow-lg transition-transform duration-300 hover:scale-[1.02]" data-id="${video.id}" role="listitem" tabindex="0" aria-label="Play: ${video.title}">
+      <div class="video-thumb-wrap relative aspect-video bg-gray-800">
+        <img class="video-thumb w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-80" src="${thumbUrl}" alt="${video.title}" loading="lazy"
+          onerror="this.style.display='none';this.parentElement.classList.add('bg-gray-700')"/>
+        <div class="video-play-overlay absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
+          <div class="video-play-btn w-12 h-12 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg></div>
         </div>
-        <span class="video-duration-tag">${video.duration}</span>
+        <span class="video-duration-tag absolute bottom-2 right-2 bg-black/70 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-md">${video.duration}</span>
       </div>
-      <div class="video-card-info">
-        <p class="video-card-title">${video.title}</p>
-        <div class="video-card-meta">
-          <span class="video-level-badge ${levelClass}">${video.level}</span>
+      <div class="video-card-info p-4">
+        <p class="video-card-title text-sm font-semibold text-gray-100 leading-tight mb-2 line-clamp-2">${video.title}</p>
+        <div class="video-card-meta flex items-center justify-between">
+          <span class="video-level-badge text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide ${levelClass}">${video.level}</span>
         </div>
       </div>
     </div>`;

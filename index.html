@@ -13,8 +13,40 @@
   <link rel="stylesheet" href="style.css"/>
   <!-- Chart.js v4 (global Chart object) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Tailwind CSS Integration -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            samsung: {
+              dark: '#060913',
+              navy: '#0f172a',
+              card: '#0b1021',
+              cardHover: '#131b31',
+              accent: '#3d82f6',
+              accentGlow: 'rgba(61, 130, 246, 0.4)',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          animation: {
+            'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%, 100%': { opacity: 1, filter: 'drop-shadow(0 0 10px rgba(61,130,246,0.5))' },
+              '50%': { opacity: .7, filter: 'drop-shadow(0 0 4px rgba(61,130,246,0.2))' },
+            }
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
+<body class="bg-samsung-dark text-gray-100 font-sans antialiased overflow-hidden selection:bg-samsung-accent/30">
 
 <!-- ═══════ LOADING SCREEN ═══════ -->
 <div id="loading-screen" class="loading-screen" aria-live="polite" aria-busy="true">
@@ -34,44 +66,53 @@
 </div>
 
 <!-- ═══════ LOGIN OVERLAY ═══════ -->
-<div id="login-overlay" class="login-overlay" aria-modal="true" role="dialog" aria-label="Sign in to BalancePoint">
-  <div class="login-bg-orbs" aria-hidden="true">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+<div id="login-overlay" class="login-overlay fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-samsung-dark to-samsung-navy p-4" aria-modal="true" role="dialog" aria-label="Sign in to BalancePoint">
+  <!-- Dynamic Orbs for Background -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+    <div class="absolute top-[20%] left-[15%] w-64 h-64 bg-samsung-accent/20 rounded-full blur-[80px] animate-pulse"></div>
+    <div class="absolute bottom-[20%] right-[15%] w-80 h-80 bg-purple-500/10 rounded-full blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
   </div>
-  <div class="login-card">
+
+  <div class="login-card relative w-full max-w-md backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl flex flex-col items-center text-center">
     <!-- Brand -->
-    <div class="login-brand">
-      <div class="login-flame" aria-hidden="true">
-        <svg width="44" height="56" viewBox="0 0 60 80" fill="none">
+    <div class="login-brand mb-8 flex flex-col items-center">
+      <div class="login-flame mb-4 animate-pulse-glow" aria-hidden="true">
+        <svg width="60" height="76" viewBox="0 0 60 80" fill="none">
           <defs>
-            <linearGradient id="lf-grad" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stop-color="#ff3a00"/>
-              <stop offset="60%" stop-color="#ff7c00"/>
-              <stop offset="100%" stop-color="#ffcc00"/>
+            <linearGradient id="lf-grad-new" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#3b82f6"/>
+              <stop offset="60%" stop-color="#60a5fa"/>
+              <stop offset="100%" stop-color="#93c5fd"/>
             </linearGradient>
           </defs>
-          <path d="M30 8C30 8 48 22 48 42C48 56 40 68 30 72C20 68 12 56 12 42C12 22 30 8 30 8Z" fill="url(#lf-grad)"/>
-          <path d="M30 24C30 24 40 34 40 46C40 54 36 62 30 66C24 62 20 54 20 46C20 34 30 24 30 24Z" fill="#ffcc00" opacity="0.6"/>
+          <path d="M30 8C30 8 48 22 48 42C48 56 40 68 30 72C20 68 12 56 12 42C12 22 30 8 30 8Z" fill="url(#lf-grad-new)"/>
+          <path d="M30 24C30 24 40 34 40 46C40 54 36 62 30 66C24 62 20 54 20 46C20 34 30 24 30 24Z" fill="#eff6ff" opacity="0.6"/>
         </svg>
       </div>
-      <h1 class="login-title">BalancePoint</h1>
-      <p class="login-tagline">Your intelligent senior health companion</p>
+      <h1 class="login-title text-3xl font-semibold text-white tracking-tight mb-2">BalancePoint</h1>
+      <p class="login-tagline text-sm text-gray-400 font-medium">Your intelligent senior health companion</p>
     </div>
 
     <!-- Features teaser -->
-    <div class="login-features">
-      <div class="lf-item"><span class="lf-icon">📡</span><span>Real-time bed telemetry</span></div>
-      <div class="lf-item"><span class="lf-icon">❤️</span><span>Live vitals monitoring</span></div>
-      <div class="lf-item"><span class="lf-icon">🎬</span><span>Guided fitness videos</span></div>
-      <div class="lf-item"><span class="lf-icon">🔒</span><span>Secure Firebase sync</span></div>
+    <div class="login-features w-full grid grid-cols-2 gap-4 mb-10 text-left">
+      <div class="lf-item flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/5 shadow-inner">
+        <span class="lf-icon text-xl">📡</span><span class="text-xs text-gray-300 font-medium leading-tight">Live bed<br/>telemetry</span>
+      </div>
+      <div class="lf-item flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/5 shadow-inner">
+        <span class="lf-icon text-xl">❤️</span><span class="text-xs text-gray-300 font-medium leading-tight">Live vitals<br/>monitoring</span>
+      </div>
+      <div class="lf-item flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/5 shadow-inner">
+        <span class="lf-icon text-xl">🎬</span><span class="text-xs text-gray-300 font-medium leading-tight">Guided fitness<br/>videos</span>
+      </div>
+      <div class="lf-item flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/5 shadow-inner">
+        <span class="lf-icon text-xl">🔒</span><span class="text-xs text-gray-300 font-medium leading-tight">Secure Firebase<br/>sync</span>
+      </div>
     </div>
 
     <!-- Sign-In Button -->
-    <button class="google-signin-btn" id="google-signin-btn" aria-label="Sign in with Google">
-      <span id="login-spinner" class="google-spinner" style="display:none" aria-hidden="true"></span>
-      <svg class="google-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <button class="google-signin-btn bg-white text-gray-900 font-medium rounded-full px-6 py-3 flex items-center justify-center gap-3 transition-all duration-300 hover:scale-[1.02] shadow-[0_4px_14px_0_rgba(255,255,255,0.15)] w-full max-w-[280px]" id="google-signin-btn" aria-label="Sign in with Google">
+      <span id="login-spinner" class="google-spinner animate-spin w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full" style="display:none" aria-hidden="true"></span>
+      <svg class="google-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
@@ -80,8 +121,8 @@
       <span class="google-btn-text">Sign in with Google</span>
     </button>
 
-    <div id="login-error" class="login-error" role="alert" style="display:none"></div>
-    <p class="login-privacy">By signing in you agree to our <a href="#">Privacy Policy</a>. Health data is encrypted and never shared.</p>
+    <div id="login-error" class="login-error mt-4 text-red-400 text-sm font-medium bg-red-400/10 px-4 py-2 rounded-lg" role="alert" style="display:none"></div>
+    <p class="login-privacy mt-8 text-xs text-gray-500">By signing in you agree to our <a href="#" class="text-samsung-accent hover:underline">Privacy Policy</a>. Health data is encrypted and never shared.</p>
   </div>
 </div>
 
@@ -231,10 +272,10 @@
       </div>
 
       <!-- BENTO GRID -->
-      <section class="bento-grid" id="bento-grid">
+      <section class="bento-grid grid grid-cols-2 md:grid-cols-4 gap-4 p-4" id="bento-grid">
 
         <!-- MEDICATIONS -->
-        <article class="card card-medications" id="card-medications" data-modal="modal-medications" role="button" tabindex="0" aria-label="Medications">
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-medications" id="card-medications" data-modal="modal-medications" role="button" tabindex="0" aria-label="Medications">
           <div class="card-icon-wrap med-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
           </div>
@@ -250,7 +291,7 @@
         </article>
 
         <!-- HEALTH RECORDS -->
-        <article class="card card-records" id="card-records" data-modal="modal-records" role="button" tabindex="0" aria-label="Health Records">
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-records" id="card-records" data-modal="modal-records" role="button" tabindex="0" aria-label="Health Records">
           <div class="card-icon-wrap rec-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
           </div>
@@ -263,7 +304,7 @@
         </article>
 
         <!-- STEPS -->
-        <article class="card card-steps" id="card-steps" data-modal="modal-steps" role="button" tabindex="0" aria-label="Daily steps">
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-steps" id="card-steps" data-modal="modal-steps" role="button" tabindex="0" aria-label="Daily steps">
           <div class="steps-top">
             <div class="steps-label">Steps Today</div>
             <div class="steps-date" id="steps-date"></div>
@@ -285,7 +326,7 @@
         </article>
 
         <!-- HEARING -->
-        <article class="card card-hearing" id="card-hearing" data-modal="modal-hearing" role="button" tabindex="0" aria-label="Hearing health">
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-hearing" id="card-hearing" data-modal="modal-hearing" role="button" tabindex="0" aria-label="Hearing health">
           <div class="hearing-bg"><img src="soundwave.png" alt="Soundwave" class="hearing-wave-img"/></div>
           <div class="card-icon-wrap hear-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
@@ -300,7 +341,7 @@
         </article>
 
         <!-- VITALS -->
-        <article class="card card-vitals" id="card-vitals" data-modal="modal-vitals" role="button" tabindex="0" aria-label="Vitals">
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-vitals" id="card-vitals" data-modal="modal-vitals" role="button" tabindex="0" aria-label="Vitals">
           <div class="vitals-header">
             <div class="card-icon-wrap vitals-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
             <h2 class="card-title">Vitals</h2>
@@ -324,7 +365,7 @@
         </article>
 
         <!-- CARDIO -->
-        <article class="card card-cardio" id="card-cardio" data-modal="modal-cardio" role="button" tabindex="0" aria-label="Cardio load">
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-cardio" id="card-cardio" data-modal="modal-cardio" role="button" tabindex="0" aria-label="Cardio load">
           <div class="card-icon-wrap cardio-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
           <h2 class="card-title">Cardio Load</h2>
           <div class="cardio-ring-wrap" aria-hidden="true">
@@ -339,7 +380,7 @@
         </article>
 
         <!-- FITNESS -->
-        <article class="card card-fitness" id="card-fitness" data-modal="modal-fitness" role="button" tabindex="0" aria-label="Fitness">
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-fitness" id="card-fitness" data-modal="modal-fitness" role="button" tabindex="0" aria-label="Fitness">
           <div class="card-icon-wrap fitness-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
           <h2 class="card-title">Fitness</h2>
           <div class="fitness-stats">
@@ -355,7 +396,7 @@
         </article>
 
         <!-- VASCULAR -->
-        <article class="card card-vascular" id="card-vascular" data-modal="modal-vascular" role="button" tabindex="0" aria-label="Vascular load">
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-vascular" id="card-vascular" data-modal="modal-vascular" role="button" tabindex="0" aria-label="Vascular load">
           <div class="vascular-illustration"><img src="vascular.png" alt="Vascular illustration" class="vascular-img"/></div>
           <div class="vascular-content">
             <div class="vascular-badge">New Assessment</div>
@@ -370,7 +411,7 @@
         </article>
 
         <!-- SLEEP -->
-        <article class="card card-sleep" id="card-sleep" data-modal="modal-sleep" role="button" tabindex="0" aria-label="Sleep">
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-sleep" id="card-sleep" data-modal="modal-sleep" role="button" tabindex="0" aria-label="Sleep">
           <div class="card-icon-wrap sleep-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
           <h2 class="card-title">Sleep</h2>
           <div class="sleep-time">7h 42m</div>
@@ -388,7 +429,7 @@
         </article>
 
         <!-- HYDRATION -->
-        <article class="card card-hydration" id="card-hydration" data-modal="modal-hydration" role="button" tabindex="0" aria-label="Hydration">
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-hydration" id="card-hydration" data-modal="modal-hydration" role="button" tabindex="0" aria-label="Hydration">
           <div class="card-icon-wrap hydration-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
           <h2 class="card-title">Hydration</h2>
           <div class="hydration-glass-wrap" aria-hidden="true">
@@ -401,22 +442,67 @@
           <button class="add-water-btn" id="add-water-btn">+ Add 250ml</button>
         </article>
 
-        <!-- BED TELEMETRY -->
-        <article class="card card-telemetry" id="card-telemetry" data-modal="modal-telemetry" role="button" tabindex="0" aria-label="Bed telemetry">
-          <div class="card-icon-wrap telemetry-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 15z"/></svg>
+        <!-- AWAKENING COUNTER -->
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col justify-between" id="card-awakening">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </div>
+            <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider bg-blue-500/10 px-2 py-1 rounded-full">Nightly</span>
           </div>
-          <div class="telemetry-card-header">
-            <h2 class="card-title">Bed Telemetry</h2>
-            <div class="tof-card-status-wrap">
-              <span class="tof-card-dot"></span>
-              <span id="tof-card-status" class="tof-card-status-text">Bed Occupied</span>
+          <div>
+            <h2 class="text-sm font-medium text-gray-400 mb-1">Awakening Count</h2>
+            <div class="flex items-baseline gap-2">
+              <span class="text-4xl font-bold text-white tracking-tight" id="awakening-count">3</span>
+              <span class="text-sm text-gray-500 font-medium">times</span>
             </div>
           </div>
-          <div class="fsr-card-grid" id="fsr-card-grid" aria-hidden="true">
-            <!-- Rendered by telemetry.js -->
+        </article>
+
+        <!-- STABILIZATION PROGRESS -->
+        <article class="card relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col items-center justify-center text-center" id="card-stabilization">
+          <h2 class="text-sm font-medium text-gray-400 absolute top-6 left-6">Stabilization</h2>
+          <div class="relative w-24 h-24 mt-4 flex items-center justify-center">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none" />
+              <circle cx="50" cy="50" r="40" stroke="#3b82f6" stroke-width="8" fill="none" stroke-dasharray="251.2" stroke-dashoffset="62.8" class="transition-all duration-1000" id="stabilization-ring" />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-2xl font-bold text-white" id="stabilization-time">15s</span>
+            </div>
           </div>
-          <p class="telemetry-card-hint">ESP32 FSR Matrix · Live</p>
+          <p class="text-xs text-blue-400 mt-4 font-medium" id="stabilization-status">Wait before walking</p>
+        </article>
+
+        <!-- BED TELEMETRY -->
+        <article class="card col-span-2 relative bg-samsung-card hover:bg-samsung-cardHover transition-all duration-300 rounded-3xl p-6 border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_8px_20px_rgba(0,0,0,0.5)] overflow-hidden card-telemetry flex flex-col justify-between" id="card-telemetry" data-modal="modal-telemetry" role="button" tabindex="0" aria-label="Bed telemetry">
+          <div class="flex justify-between items-start mb-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-samsung-accent/20 flex items-center justify-center text-samsung-accent">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 15z"/></svg>
+              </div>
+              <div>
+                <h2 class="text-lg font-semibold text-white">Bed Telemetry</h2>
+                <p class="text-xs text-gray-400">Live ESP32 Matrix</p>
+              </div>
+            </div>
+            
+            <div class="tof-card-status-wrap flex items-center gap-2 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
+              <span class="tof-card-dot w-2 h-2 rounded-full bg-green-400 shadow-[0_0_8px_#4ade80] animate-pulse"></span>
+              <span id="tof-card-status" class="tof-card-status-text text-xs font-medium text-green-400">Bed Occupied</span>
+            </div>
+          </div>
+          
+          <div class="flex-1 flex items-center justify-center py-4 relative">
+            <!-- Glow rings around matrix -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="w-32 h-32 rounded-full border border-samsung-accent/10 animate-ping" style="animation-duration: 3s;"></div>
+              <div class="absolute w-24 h-24 rounded-full border border-samsung-accent/20 animate-ping" style="animation-duration: 2s; animation-delay: 0.5s;"></div>
+            </div>
+            <div class="fsr-card-grid w-full h-24 grid grid-cols-4 grid-rows-4 gap-1 z-10" id="fsr-card-grid" aria-hidden="true">
+              <!-- Rendered by telemetry.js -->
+            </div>
+          </div>
         </article>
 
       </section><!-- /bento-grid -->
@@ -464,27 +550,41 @@
   </main>
 
   <!-- ─── FLOATING BOTTOM NAV ─── -->
-  <nav class="bottom-nav" id="bottom-nav" aria-label="Main navigation">
-    <div class="nav-pill">
-      <button class="nav-btn active" data-tab="home" id="nav-home" aria-label="Home">
-        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span>
-        <span class="nav-label">Home</span>
+  <nav class="bottom-nav fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40" id="bottom-nav" aria-label="Main navigation">
+    <div class="nav-pill flex items-center justify-around backdrop-blur-md bg-samsung-card/70 border border-white/10 rounded-full px-4 py-2 shadow-2xl w-full max-w-sm gap-2">
+      <button class="nav-btn active group flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-300 w-16" data-tab="home" id="nav-home" aria-label="Home">
+        <span class="nav-icon text-gray-500 group-[.active]:text-samsung-accent group-[.active]:filter group-[.active]:drop-shadow-[0_0_8px_rgba(61,130,246,0.6)] transition-all duration-300 mb-1">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        </span>
+        <span class="nav-label text-[10px] font-medium text-gray-500 group-[.active]:text-samsung-accent transition-colors duration-300">Home</span>
       </button>
-      <button class="nav-btn" data-tab="together" id="nav-together" aria-label="Together">
-        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-        <span class="nav-label">Together</span>
+      
+      <button class="nav-btn group flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-300 w-16" data-tab="together" id="nav-together" aria-label="Together">
+        <span class="nav-icon text-gray-500 group-[.active]:text-samsung-accent group-[.active]:filter group-[.active]:drop-shadow-[0_0_8px_rgba(61,130,246,0.6)] transition-all duration-300 mb-1">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </span>
+        <span class="nav-label text-[10px] font-medium text-gray-500 group-[.active]:text-samsung-accent transition-colors duration-300">Together</span>
       </button>
-      <button class="nav-btn" data-tab="discover" id="nav-discover" aria-label="Discover">
-        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-        <span class="nav-label">Discover</span>
+      
+      <button class="nav-btn group flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-300 w-16" data-tab="discover" id="nav-discover" aria-label="Discover">
+        <span class="nav-icon text-gray-500 group-[.active]:text-samsung-accent group-[.active]:filter group-[.active]:drop-shadow-[0_0_8px_rgba(61,130,246,0.6)] transition-all duration-300 mb-1">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+        <span class="nav-label text-[10px] font-medium text-gray-500 group-[.active]:text-samsung-accent transition-colors duration-300">Discover</span>
       </button>
-      <button class="nav-btn" data-tab="fitness" id="nav-fitness-tab" aria-label="Fitness">
-        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>
-        <span class="nav-label">Fitness</span>
+      
+      <button class="nav-btn group flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-300 w-16" data-tab="fitness" id="nav-fitness-tab" aria-label="Fitness">
+        <span class="nav-icon text-gray-500 group-[.active]:text-samsung-accent group-[.active]:filter group-[.active]:drop-shadow-[0_0_8px_rgba(61,130,246,0.6)] transition-all duration-300 mb-1">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        </span>
+        <span class="nav-label text-[10px] font-medium text-gray-500 group-[.active]:text-samsung-accent transition-colors duration-300">Fitness</span>
       </button>
-      <button class="nav-btn nav-scan-btn" id="nav-scan" aria-label="Scan sensor">
-        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V5a2 2 0 0 1 2-2h4"/><path d="M21 9V5a2 2 0 0 0-2-2h-4"/><path d="M3 15v4a2 2 0 0 0 2 2h4"/><path d="M21 15v4a2 2 0 0 1-2 2h-4"/><line x1="7" y1="12" x2="17" y2="12"/></svg></span>
-        <span class="nav-label">Scan</span>
+      
+      <button class="nav-btn nav-scan-btn group flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-300 w-16" id="nav-scan" aria-label="Scan sensor">
+        <span class="nav-icon text-gray-500 group:hover:text-green-400 group:hover:filter group:hover:drop-shadow-[0_0_8px_rgba(74,222,128,0.6)] transition-all duration-300 mb-1">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V5a2 2 0 0 1 2-2h4"/><path d="M21 9V5a2 2 0 0 0-2-2h-4"/><path d="M3 15v4a2 2 0 0 0 2 2h4"/><path d="M21 15v4a2 2 0 0 1-2 2h-4"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+        </span>
+        <span class="nav-label text-[10px] font-medium text-gray-500 transition-colors duration-300">Scan</span>
       </button>
     </div>
   </nav>
