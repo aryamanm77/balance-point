@@ -45,6 +45,15 @@
       }
     }
   </script>
+  <!-- Global Error Catcher -->
+  <script>
+    window.addEventListener('error', function(e) {
+      alert("Error: " + e.message);
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+      alert("Promise Error: " + (e.reason && e.reason.message ? e.reason.message : String(e.reason)));
+    });
+  </script>
 </head>
 <body class="bg-samsung-dark text-gray-100 font-sans antialiased overflow-hidden selection:bg-samsung-accent/30">
 
