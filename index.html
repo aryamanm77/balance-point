@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="description" content="BalancePoint — Senior health PWA with Firebase sync, vitals tracking, bed telemetry, and guided fitness videos."/>
+  <meta name="theme-color" content="#0b1021"/>
+  <title>BalancePoint — Health &amp; Balance Dashboard</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <!-- Chart.js v4 (global Chart object) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ═══════ LOADING SCREEN ═══════ -->
+<div id="loading-screen" class="loading-screen" aria-live="polite" aria-busy="true">
+  <div class="loading-logo">
+    <svg width="48" height="48" viewBox="0 0 60 80" fill="none">
+      <defs>
+        <linearGradient id="ld-flame" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stop-color="#ff3a00"/>
+          <stop offset="100%" stop-color="#ffcc00"/>
+        </linearGradient>
+      </defs>
+      <path d="M30 8C30 8 48 22 48 42C48 56 40 68 30 72C20 68 12 56 12 42C12 22 30 8 30 8Z" fill="url(#ld-flame)"/>
+    </svg>
+    <span class="loading-brand">BalancePoint</span>
+  </div>
+  <div class="loading-spinner" aria-hidden="true"><div class="spin-ring"></div></div>
+</div>
+
+<!-- ═══════ LOGIN OVERLAY ═══════ -->
+<div id="login-overlay" class="login-overlay" aria-modal="true" role="dialog" aria-label="Sign in to BalancePoint">
+  <div class="login-bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="login-card">
+    <!-- Brand -->
+    <div class="login-brand">
+      <div class="login-flame" aria-hidden="true">
+        <svg width="44" height="56" viewBox="0 0 60 80" fill="none">
+          <defs>
+            <linearGradient id="lf-grad" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#ff3a00"/>
+              <stop offset="60%" stop-color="#ff7c00"/>
+              <stop offset="100%" stop-color="#ffcc00"/>
+            </linearGradient>
+          </defs>
+          <path d="M30 8C30 8 48 22 48 42C48 56 40 68 30 72C20 68 12 56 12 42C12 22 30 8 30 8Z" fill="url(#lf-grad)"/>
+          <path d="M30 24C30 24 40 34 40 46C40 54 36 62 30 66C24 62 20 54 20 46C20 34 30 24 30 24Z" fill="#ffcc00" opacity="0.6"/>
+        </svg>
+      </div>
+      <h1 class="login-title">BalancePoint</h1>
+      <p class="login-tagline">Your intelligent senior health companion</p>
+    </div>
+
+    <!-- Features teaser -->
+    <div class="login-features">
+      <div class="lf-item"><span class="lf-icon">📡</span><span>Real-time bed telemetry</span></div>
+      <div class="lf-item"><span class="lf-icon">❤️</span><span>Live vitals monitoring</span></div>
+      <div class="lf-item"><span class="lf-icon">🎬</span><span>Guided fitness videos</span></div>
+      <div class="lf-item"><span class="lf-icon">🔒</span><span>Secure Firebase sync</span></div>
+    </div>
+
+    <!-- Sign-In Button -->
+    <button class="google-signin-btn" id="google-signin-btn" aria-label="Sign in with Google">
+      <span id="login-spinner" class="google-spinner" style="display:none" aria-hidden="true"></span>
+      <svg class="google-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      <span class="google-btn-text">Sign in with Google</span>
+    </button>
+
+    <div id="login-error" class="login-error" role="alert" style="display:none"></div>
+    <p class="login-privacy">By signing in you agree to our <a href="#">Privacy Policy</a>. Health data is encrypted and never shared.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MAIN APP (hidden until authenticated)
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="app" class="hidden">
+
+  <!-- ─── STICKY HEADER ─── -->
+  <header class="app-header" id="app-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <!-- Profile avatar / dropdown trigger -->
+        <div class="avatar-wrap" id="avatar-btn">
+          <img id="user-photo-header" class="avatar-photo" src="" alt="Profile" style="display:none"/>
+          <div id="user-initials" class="avatar-initials">BP</div>
+        </div>
+        <div class="header-greeting">
+          <span class="greeting-sub">Good evening,</span>
+          <span class="greeting-name">Alex</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <!-- Widget drawer toggle -->
+        <button class="icon-btn" id="widget-drawer-btn" aria-label="Customise widgets" title="Customise widgets">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </button>
+        <button class="icon-btn" id="notif-btn" aria-label="Notifications">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Profile dropdown -->
+    <div class="profile-dropdown" id="profile-dropdown" role="menu" aria-label="User menu">
+      <div class="pd-user-info">
+        <img id="pd-photo" src="" alt="Profile" class="pd-photo" onerror="this.style.display='none'"/>
+        <div>
+          <div id="user-display-name" class="pd-name">—</div>
+          <div id="user-display-email" class="pd-email">—</div>
+        </div>
+      </div>
+      <div class="pd-divider"></div>
+      <button class="pd-item" id="pd-settings-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </button>
+      <button class="pd-item pd-signout" id="signout-btn" role="menuitem">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </div>
+
+    <div class="date-strip">
+      <span id="current-date"></span>
+      <span class="health-score-pill">Score <strong id="health-score-val">87</strong></span>
+    </div>
+
+    <!-- CATEGORY ICON BAR -->
+    <nav class="cat-bar" id="cat-bar" aria-label="Health categories">
+      <button class="cat-btn active" data-cat="overview" aria-label="Overview">
+        <span class="cat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span>
+        <span class="cat-label">Overview</span>
+      </button>
+      <button class="cat-btn" data-cat="activity" aria-label="Activity">
+        <span class="cat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+        <span class="cat-label">Activity</span>
+      </button>
+      <button class="cat-btn" data-cat="sleep" aria-label="Sleep">
+        <span class="cat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+        <span class="cat-label">Sleep</span>
+      </button>
+      <button class="cat-btn" data-cat="heart" aria-label="Heart Rate">
+        <span class="cat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
+        <span class="cat-label">Heart</span>
+      </button>
+      <button class="cat-btn" data-cat="mind" aria-label="Mindfulness">
+        <span class="cat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></span>
+        <span class="cat-label">Mind</span>
+      </button>
+      <button class="cat-btn" data-cat="nutrition" aria-label="Nutrition">
+        <span class="cat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></span>
+        <span class="cat-label">Nutrition</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ─── MAIN SCROLL AREA ─── -->
+  <main class="scroll-area" id="main-scroll">
+
+    <!-- ══════════ TAB: HOME ══════════ -->
+    <section class="tab-view active" id="tab-home">
+
+      <!-- Sync Alert -->
+      <div class="sync-alert-card" id="sync-alert">
+        <div class="sync-alert-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3d82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>
+        </div>
+        <div class="sync-alert-content">
+          <p class="sync-title">ESP32 Sensor Connected</p>
+          <p class="sync-sub">BalancePoint hardware syncing &bull; Last sync: just now</p>
+        </div>
+        <div class="sync-alert-actions">
+          <button class="sync-btn dismiss" id="sync-dismiss">Not now</button>
+          <button class="sync-btn primary" id="sync-settings">Settings</button>
+        </div>
+      </div>
+
+      <!-- Energy + Quick Stats Row -->
+      <div class="energy-row">
+        <div class="card energy-card" id="energy-card" data-modal="modal-vitals">
+          <div class="energy-flame-wrap" aria-hidden="true">
+            <svg class="flame-svg" viewBox="0 0 60 80" fill="none">
+              <defs>
+                <radialGradient id="flameGlow" cx="50%" cy="80%" r="60%"><stop offset="0%" stop-color="#ff9500" stop-opacity="0.6"/><stop offset="100%" stop-color="#ff3a00" stop-opacity="0"/></radialGradient>
+                <linearGradient id="flameFill" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#ff3a00"/><stop offset="50%" stop-color="#ff7c00"/><stop offset="100%" stop-color="#ffcc00"/></linearGradient>
+              </defs>
+              <ellipse cx="30" cy="72" rx="28" ry="8" fill="url(#flameGlow)"/>
+              <path d="M30 8C30 8 48 22 48 42C48 56 40 68 30 72C20 68 12 56 12 42C12 22 30 8 30 8Z" fill="url(#flameFill)" opacity="0.9"/>
+              <path d="M30 24C30 24 40 34 40 46C40 54 36 62 30 66C24 62 20 54 20 46C20 34 30 24 30 24Z" fill="#ffcc00" opacity="0.7"/>
+              <path d="M30 38C30 38 36 44 36 50C36 55 33 60 30 62C27 60 24 55 24 50C24 44 30 38 30 38Z" fill="#fff" opacity="0.5"/>
+            </svg>
+          </div>
+          <div class="energy-label">Energy Score</div>
+          <div class="energy-score" id="energy-score">—</div>
+          <div class="energy-sub">Calculating…</div>
+          <div class="energy-bar-wrap"><div class="energy-bar"><div class="energy-bar-fill" style="width:0%"></div></div></div>
+        </div>
+        <div class="energy-quick-col">
+          <div class="card qstat-card" id="qstat-hr" data-modal="modal-vitals">
+            <span class="qs-icon">❤️</span>
+            <span class="qs-val" id="qs-heart">72</span>
+            <span class="qs-unit">bpm</span>
+          </div>
+          <div class="card qstat-card" id="qstat-spo2" data-modal="modal-vitals">
+            <span class="qs-icon">💧</span>
+            <span class="qs-val" id="qs-spo2">98</span>
+            <span class="qs-unit">%SpO₂</span>
+          </div>
+          <div class="card qstat-card" id="qstat-steps" data-modal="modal-steps">
+            <span class="qs-icon">🚶</span>
+            <span class="qs-val" id="qs-steps">0</span>
+            <span class="qs-unit">steps</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BENTO GRID -->
+      <section class="bento-grid" id="bento-grid">
+
+        <!-- MEDICATIONS -->
+        <article class="card card-medications" id="card-medications" data-modal="modal-medications" role="button" tabindex="0" aria-label="Medications">
+          <div class="card-icon-wrap med-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </div>
+          <div class="card-content">
+            <h2 class="card-title">Medications <span class="badge-count" id="med-count-badge">3</span></h2>
+            <p class="card-sub" id="med-card-sub">1 due today</p>
+            <div class="med-pills-row">
+              <span class="med-pill taken">Vitamin D3</span>
+              <span class="med-pill pending">Omega-3</span>
+            </div>
+          </div>
+          <div class="card-chevron">›</div>
+        </article>
+
+        <!-- HEALTH RECORDS -->
+        <article class="card card-records" id="card-records" data-modal="modal-records" role="button" tabindex="0" aria-label="Health Records">
+          <div class="card-icon-wrap rec-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="card-content">
+            <h2 class="card-title">Health Records</h2>
+            <p class="card-sub">Updated 3 days ago</p>
+          </div>
+          <div class="rec-tags"><span class="rec-tag">Blood Test</span><span class="rec-tag">ECG</span></div>
+          <div class="card-chevron">›</div>
+        </article>
+
+        <!-- STEPS -->
+        <article class="card card-steps" id="card-steps" data-modal="modal-steps" role="button" tabindex="0" aria-label="Daily steps">
+          <div class="steps-top">
+            <div class="steps-label">Steps Today</div>
+            <div class="steps-date" id="steps-date"></div>
+          </div>
+          <div class="steps-counter-wrap">
+            <span class="steps-big" id="steps-count">0</span>
+            <span class="steps-unit">steps</span>
+          </div>
+          <div class="steps-goal-row">
+            <span class="steps-goal-text">Goal: <strong>10,000</strong></span>
+            <span class="steps-pct" id="steps-pct">0%</span>
+          </div>
+          <div class="steps-bar-wrap"><div class="steps-bar"><div class="steps-bar-fill" id="steps-bar-fill" style="width:0%"></div></div></div>
+          <div class="steps-metrics-row">
+            <div class="metric-chip"><span class="chip-val" id="chip-km">0.0</span><span class="chip-label">km</span></div>
+            <div class="metric-chip"><span class="chip-val" id="chip-kcal">0</span><span class="chip-label">kcal</span></div>
+            <div class="metric-chip"><span class="chip-val" id="chip-min">0 min</span><span class="chip-label">active</span></div>
+          </div>
+        </article>
+
+        <!-- HEARING -->
+        <article class="card card-hearing" id="card-hearing" data-modal="modal-hearing" role="button" tabindex="0" aria-label="Hearing health">
+          <div class="hearing-bg"><img src="soundwave.png" alt="Soundwave" class="hearing-wave-img"/></div>
+          <div class="card-icon-wrap hear-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+          </div>
+          <div class="card-content">
+            <h2 class="card-title">Hearing</h2>
+            <p class="card-sub">Noise: <strong style="color:#ffb347">Low</strong></p>
+          </div>
+          <div class="soundwave-bars" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </article>
+
+        <!-- VITALS -->
+        <article class="card card-vitals" id="card-vitals" data-modal="modal-vitals" role="button" tabindex="0" aria-label="Vitals">
+          <div class="vitals-header">
+            <div class="card-icon-wrap vitals-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+            <h2 class="card-title">Vitals</h2>
+          </div>
+          <div class="vitals-grid">
+            <div class="vital-item"><span class="vital-icon">❤️</span><span class="vital-val" id="heart-rate">72</span><span class="vital-unit">bpm</span></div>
+            <div class="vital-item"><span class="vital-icon">💧</span><span class="vital-val" id="spo2">98</span><span class="vital-unit">%</span></div>
+            <div class="vital-item"><span class="vital-icon">🩺</span><span class="vital-val" id="bp">118/76</span><span class="vital-unit">mmHg</span></div>
+            <div class="vital-item"><span class="vital-icon">🌡️</span><span class="vital-val" id="temp">36.6</span><span class="vital-unit">°C</span></div>
+          </div>
+          <svg class="vitals-sparkline" id="vitals-sparkline" viewBox="0 0 220 50" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path id="spark-area" fill="url(#sparkGrad)"/>
+            <path id="spark-line" fill="none" stroke="#00e5ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </article>
+
+        <!-- CARDIO -->
+        <article class="card card-cardio" id="card-cardio" data-modal="modal-cardio" role="button" tabindex="0" aria-label="Cardio load">
+          <div class="card-icon-wrap cardio-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <h2 class="card-title">Cardio Load</h2>
+          <div class="cardio-ring-wrap" aria-hidden="true">
+            <svg class="cardio-ring" viewBox="0 0 80 80">
+              <circle class="ring-bg" cx="40" cy="40" r="32"/>
+              <circle class="ring-fill" cx="40" cy="40" r="32" stroke-dasharray="201" stroke-dashoffset="140"/>
+              <text x="40" y="37" class="ring-label">64</text>
+              <text x="40" y="52" class="ring-sub-label">/ 100</text>
+            </svg>
+          </div>
+          <p class="cardio-status">Moderate intensity</p>
+        </article>
+
+        <!-- FITNESS -->
+        <article class="card card-fitness" id="card-fitness" data-modal="modal-fitness" role="button" tabindex="0" aria-label="Fitness">
+          <div class="card-icon-wrap fitness-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+          <h2 class="card-title">Fitness</h2>
+          <div class="fitness-stats">
+            <div class="fs-item"><span class="fs-val">5</span><span class="fs-label">workouts this week</span></div>
+            <div class="fs-divider"></div>
+            <div class="fs-item"><span class="fs-val">3.2h</span><span class="fs-label">total duration</span></div>
+            <div class="fs-divider"></div>
+            <div class="fs-item"><span class="fs-val">1,240</span><span class="fs-label">kcal burned</span></div>
+          </div>
+          <div class="week-dots" aria-label="Workout days this week">
+            <span class="wd active">M</span><span class="wd active">T</span><span class="wd">W</span><span class="wd active">T</span><span class="wd active">F</span><span class="wd active">S</span><span class="wd">S</span>
+          </div>
+        </article>
+
+        <!-- VASCULAR -->
+        <article class="card card-vascular" id="card-vascular" data-modal="modal-vascular" role="button" tabindex="0" aria-label="Vascular load">
+          <div class="vascular-illustration"><img src="vascular.png" alt="Vascular illustration" class="vascular-img"/></div>
+          <div class="vascular-content">
+            <div class="vascular-badge">New Assessment</div>
+            <h2 class="vascular-title">Vascular Load</h2>
+            <p class="vascular-desc">Your vascular health is <strong>Good</strong>. Maintain activity &amp; hydration.</p>
+            <div class="vascular-metrics">
+              <div class="vm-item"><span class="vm-val">72</span><span class="vm-label">Elasticity</span></div>
+              <div class="vm-item"><span class="vm-val">88%</span><span class="vm-label">Flow Rate</span></div>
+              <div class="vm-item"><span class="vm-val">Low</span><span class="vm-label">Resistance</span></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SLEEP -->
+        <article class="card card-sleep" id="card-sleep" data-modal="modal-sleep" role="button" tabindex="0" aria-label="Sleep">
+          <div class="card-icon-wrap sleep-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+          <h2 class="card-title">Sleep</h2>
+          <div class="sleep-time">7h 42m</div>
+          <div class="sleep-quality-row"><span class="sq-label">Quality</span><span class="sq-badge good">Good</span></div>
+          <div class="sleep-phases">
+            <div class="sp-bar awake" style="width:8%"></div>
+            <div class="sp-bar rem" style="width:22%"></div>
+            <div class="sp-bar light" style="width:40%"></div>
+            <div class="sp-bar deep" style="width:30%"></div>
+          </div>
+          <div class="sleep-legend">
+            <span><i class="dot awake"></i>Awake</span><span><i class="dot rem"></i>REM</span>
+            <span><i class="dot light"></i>Light</span><span><i class="dot deep"></i>Deep</span>
+          </div>
+        </article>
+
+        <!-- HYDRATION -->
+        <article class="card card-hydration" id="card-hydration" data-modal="modal-hydration" role="button" tabindex="0" aria-label="Hydration">
+          <div class="card-icon-wrap hydration-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
+          <h2 class="card-title">Hydration</h2>
+          <div class="hydration-glass-wrap" aria-hidden="true">
+            <div class="hydration-glass">
+              <div class="hydration-fill" id="hydration-fill" style="height:55%"></div>
+              <div class="hydration-wave"></div>
+            </div>
+          </div>
+          <p class="hydration-info">1.1L / 2.0L <span style="opacity:.6">today</span></p>
+          <button class="add-water-btn" id="add-water-btn">+ Add 250ml</button>
+        </article>
+
+        <!-- BED TELEMETRY -->
+        <article class="card card-telemetry" id="card-telemetry" data-modal="modal-telemetry" role="button" tabindex="0" aria-label="Bed telemetry">
+          <div class="card-icon-wrap telemetry-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 15z"/></svg>
+          </div>
+          <div class="telemetry-card-header">
+            <h2 class="card-title">Bed Telemetry</h2>
+            <div class="tof-card-status-wrap">
+              <span class="tof-card-dot"></span>
+              <span id="tof-card-status" class="tof-card-status-text">Bed Occupied</span>
+            </div>
+          </div>
+          <div class="fsr-card-grid" id="fsr-card-grid" aria-hidden="true">
+            <!-- Rendered by telemetry.js -->
+          </div>
+          <p class="telemetry-card-hint">ESP32 FSR Matrix · Live</p>
+        </article>
+
+      </section><!-- /bento-grid -->
+    </section><!-- /tab-home -->
+
+    <!-- ══════════ TOGETHER ══════════ -->
+    <section class="tab-view" id="tab-together">
+      <div class="placeholder-tab">
+        <div class="placeholder-icon">👥</div>
+        <h2>Together</h2>
+        <p>Connect with caregivers and health partners. Coming soon.</p>
+      </div>
+    </section>
+
+    <!-- ══════════ DISCOVER ══════════ -->
+    <section class="tab-view" id="tab-discover">
+      <div class="placeholder-tab">
+        <div class="placeholder-icon">🔍</div>
+        <h2>Discover</h2>
+        <p>Explore personalised health tips, articles and programs. Coming soon.</p>
+      </div>
+    </section>
+
+    <!-- ══════════ FITNESS ══════════ -->
+    <section class="tab-view" id="tab-fitness">
+      <div class="fitness-tab-header">
+        <div class="ftab-stat"><span class="ftab-val">5</span><span class="ftab-label">Workouts<br>this week</span></div>
+        <div class="ftab-divider"></div>
+        <div class="ftab-stat"><span class="ftab-val">3.2h</span><span class="ftab-label">Active<br>time</span></div>
+        <div class="ftab-divider"></div>
+        <div class="ftab-stat"><span class="ftab-val">1,240</span><span class="ftab-label">kcal<br>burned</span></div>
+        <div class="ftab-divider"></div>
+        <div class="ftab-stat"><span class="ftab-val streak">42</span><span class="ftab-label">Day<br>streak</span></div>
+      </div>
+      <div class="video-search-wrap">
+        <div class="video-search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="video-search" placeholder="Search videos…" aria-label="Search fitness videos"/>
+        </div>
+      </div>
+      <div id="video-library"></div>
+    </section>
+
+    <div style="height:110px"></div>
+  </main>
+
+  <!-- ─── FLOATING BOTTOM NAV ─── -->
+  <nav class="bottom-nav" id="bottom-nav" aria-label="Main navigation">
+    <div class="nav-pill">
+      <button class="nav-btn active" data-tab="home" id="nav-home" aria-label="Home">
+        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span>
+        <span class="nav-label">Home</span>
+      </button>
+      <button class="nav-btn" data-tab="together" id="nav-together" aria-label="Together">
+        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        <span class="nav-label">Together</span>
+      </button>
+      <button class="nav-btn" data-tab="discover" id="nav-discover" aria-label="Discover">
+        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+        <span class="nav-label">Discover</span>
+      </button>
+      <button class="nav-btn" data-tab="fitness" id="nav-fitness-tab" aria-label="Fitness">
+        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>
+        <span class="nav-label">Fitness</span>
+      </button>
+      <button class="nav-btn nav-scan-btn" id="nav-scan" aria-label="Scan sensor">
+        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V5a2 2 0 0 1 2-2h4"/><path d="M21 9V5a2 2 0 0 0-2-2h-4"/><path d="M3 15v4a2 2 0 0 0 2 2h4"/><path d="M21 15v4a2 2 0 0 1-2 2h-4"/><line x1="7" y1="12" x2="17" y2="12"/></svg></span>
+        <span class="nav-label">Scan</span>
+      </button>
+    </div>
+  </nav>
+
+</div><!-- /#app -->
+
+<!-- ─── WIDGET DRAWER ─── -->
+<div class="widget-drawer-overlay" id="widget-drawer-overlay" aria-hidden="true"></div>
+<aside class="widget-drawer" id="widget-drawer" aria-label="Customise widgets" role="dialog">
+  <div class="wd-header">
+    <h2 class="wd-title">🔧 Customise Dashboard</h2>
+    <button class="wd-close-btn" id="widget-drawer-close" aria-label="Close widget drawer">✕</button>
+  </div>
+  <p class="wd-subtitle">Toggle cards on/off. Changes sync to your account.</p>
+  <div id="widget-drawer-list"></div>
+</aside>
+
+<!-- ─── MODAL OVERLAY ─── -->
+<div class="modal-overlay" id="modal-overlay" aria-hidden="true"></div>
+
+<!-- ══════════════════ HEALTH MODALS ══════════════════ -->
+
+<!-- MEDICATIONS MODAL -->
+<div class="modal" id="modal-medications" role="dialog" aria-modal="true" aria-label="Medications">
+  <div class="modal-header med-modal-header">
+    <div class="modal-icon-wrap med-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+    <h2>Medications</h2>
+    <button class="modal-close" data-close="modal-medications" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="med-risk-row">
+      <span>Fall Risk: </span><span class="risk-pill risk-moderate" id="med-risk-level">Moderate</span>
+    </div>
+    <div id="med-list"></div>
+    <div id="med-add-form"></div>
+    <button class="modal-action-btn" id="med-add-open-btn" style="margin-top:12px">+ Add Medication</button>
+    <div class="modal-section-title" style="margin-top:16px">Adherence this week</div>
+    <div class="adherence-bar-wrap">
+      <div class="adherence-bar"><div class="adherence-fill" id="adherence-fill" style="width:86%"></div></div>
+      <span id="adherence-pct">86%</span>
+    </div>
+  </div>
+</div>
+
+<!-- HEALTH RECORDS MODAL -->
+<div class="modal" id="modal-records" role="dialog" aria-modal="true" aria-label="Health Records">
+  <div class="modal-header rec-modal-header">
+    <div class="modal-icon-wrap rec-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+    <h2>Health Records</h2>
+    <button class="modal-close" data-close="modal-records" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="record-list">
+      <div class="record-item"><span class="rec-type blood">Blood Panel</span><span class="rec-date">Aug 28, 2026</span></div>
+      <div class="record-item"><span class="rec-type ecg">ECG Report</span><span class="rec-date">Aug 14, 2026</span></div>
+      <div class="record-item"><span class="rec-type xray">Chest X-Ray</span><span class="rec-date">Jul 02, 2026</span></div>
+      <div class="record-item"><span class="rec-type blood">Lipid Profile</span><span class="rec-date">Jun 15, 2026</span></div>
+    </div>
+    <button class="modal-action-btn">+ Upload Record</button>
+  </div>
+</div>
+
+<!-- STEPS MODAL -->
+<div class="modal" id="modal-steps" role="dialog" aria-modal="true" aria-label="Steps">
+  <div class="modal-header steps-modal-header">
+    <div class="modal-icon-wrap"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+    <h2>Activity &amp; Steps</h2>
+    <button class="modal-close" data-close="modal-steps" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="steps-modal-big" id="modal-steps-count">0</div>
+    <p style="text-align:center;color:rgba(255,255,255,.5);margin:0 0 20px">steps today</p>
+    <div class="modal-section-title">7-Day History</div>
+    <div class="steps-chart" id="steps-chart"></div>
+    <div class="steps-chart-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+  </div>
+</div>
+
+<!-- HEARING MODAL -->
+<div class="modal" id="modal-hearing" role="dialog" aria-modal="true" aria-label="Hearing">
+  <div class="modal-header hear-modal-header">
+    <div class="modal-icon-wrap hear-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></div>
+    <h2>Hearing Health</h2>
+    <button class="modal-close" data-close="modal-hearing" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="hearing-meter-wrap">
+      <div class="hearing-meter"><div class="hm-fill" style="width:28%"></div></div>
+      <div class="hearing-meter-labels"><span>Safe</span><span>Moderate</span><span>Loud</span></div>
+    </div>
+    <p class="hearing-note">Current: <strong>42 dB</strong> — Safe zone</p>
+    <div class="modal-section-title">Today's Exposure</div>
+    <div class="hearing-timeline">
+      <div class="ht-item"><span class="ht-time">9:00</span><span class="ht-bar safe" style="width:40%"></span><span>38 dB</span></div>
+      <div class="ht-item"><span class="ht-time">12:00</span><span class="ht-bar moderate" style="width:65%"></span><span>68 dB</span></div>
+      <div class="ht-item"><span class="ht-time">15:00</span><span class="ht-bar safe" style="width:30%"></span><span>32 dB</span></div>
+      <div class="ht-item"><span class="ht-time">18:00</span><span class="ht-bar safe" style="width:35%"></span><span>42 dB</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- VITALS MODAL -->
+<div class="modal" id="modal-vitals" role="dialog" aria-modal="true" aria-label="Vitals">
+  <div class="modal-header vitals-modal-header">
+    <div class="modal-icon-wrap vitals-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+    <h2>Vitals Dashboard</h2>
+    <button class="modal-close" data-close="modal-vitals" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="vitals-modal-grid">
+      <div class="vm-card heart"><div class="vm-emoji">❤️</div><div class="vm-big-val" id="m-heart">72</div><div class="vm-unit">bpm</div><div class="vm-label">Heart Rate</div><div class="vm-status normal">Normal</div></div>
+      <div class="vm-card spo2"><div class="vm-emoji">💧</div><div class="vm-big-val" id="m-spo2">98</div><div class="vm-unit">%</div><div class="vm-label">SpO₂</div><div class="vm-status normal">Optimal</div></div>
+      <div class="vm-card bp"><div class="vm-emoji">🩺</div><div class="vm-big-val" style="font-size:1.6rem">118/76</div><div class="vm-unit">mmHg</div><div class="vm-label">Blood Pressure</div><div class="vm-status normal">Normal</div></div>
+      <div class="vm-card temp"><div class="vm-emoji">🌡️</div><div class="vm-big-val">36.6</div><div class="vm-unit">°C</div><div class="vm-label">Temperature</div><div class="vm-status normal">Normal</div></div>
+    </div>
+    <div class="chart-section">
+      <div class="modal-section-title">Heart Rate — 24h</div>
+      <div class="chart-container" style="height:160px"><canvas id="hr-chart"></canvas></div>
+    </div>
+    <div class="chart-section" style="margin-top:16px">
+      <div class="modal-section-title">SpO₂ — 7 Day Trend</div>
+      <div class="chart-container" style="height:130px"><canvas id="spo2-chart"></canvas></div>
+    </div>
+    <button class="modal-action-btn" style="margin-top:16px" onclick="window.measureNow()">📡 Measure Now</button>
+  </div>
+</div>
+
+<!-- CARDIO MODAL -->
+<div class="modal" id="modal-cardio" role="dialog" aria-modal="true" aria-label="Cardio load">
+  <div class="modal-header cardio-modal-header">
+    <div class="modal-icon-wrap cardio-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+    <h2>Daily Cardio Load</h2>
+    <button class="modal-close" data-close="modal-cardio" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="chart-section">
+      <div class="modal-section-title">Weekly Cardio Load</div>
+      <div class="chart-container" style="height:160px"><canvas id="cardio-week-chart"></canvas></div>
+    </div>
+    <p style="text-align:center;color:rgba(255,255,255,.6);margin:12px 0">Today: <strong style="color:#6c63ff">64/100</strong> — Moderate intensity</p>
+  </div>
+</div>
+
+<!-- FITNESS MODAL -->
+<div class="modal" id="modal-fitness" role="dialog" aria-modal="true" aria-label="Fitness">
+  <div class="modal-header fitness-modal-header">
+    <div class="modal-icon-wrap fitness-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+    <h2>Fitness Overview</h2>
+    <button class="modal-close" data-close="modal-fitness" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="fitness-modal-stats">
+      <div class="fms-item"><span class="fms-val">5</span><span class="fms-label">Workouts</span></div>
+      <div class="fms-item"><span class="fms-val">3.2h</span><span class="fms-label">Duration</span></div>
+      <div class="fms-item"><span class="fms-val">1,240</span><span class="fms-label">kcal</span></div>
+      <div class="fms-item"><span class="fms-val">42</span><span class="fms-label">Streak Days</span></div>
+    </div>
+    <div class="modal-section-title">Recent Workouts</div>
+    <div class="workout-list">
+      <div class="wo-item"><span class="wo-icon">🏃</span><div><strong>Morning Run</strong><br><small>5.2 km · 34 min · 320 kcal</small></div><span class="wo-date">Today</span></div>
+      <div class="wo-item"><span class="wo-icon">🏋️</span><div><strong>Strength Training</strong><br><small>45 min · 280 kcal</small></div><span class="wo-date">Yesterday</span></div>
+      <div class="wo-item"><span class="wo-icon">🚴</span><div><strong>Cycling</strong><br><small>18 km · 52 min · 380 kcal</small></div><span class="wo-date">Sep 9</span></div>
+    </div>
+    <button class="modal-action-btn" style="margin-top:16px" onclick="window.switchTab('fitness');window.closeAllModals()">▶ Browse Video Workouts</button>
+  </div>
+</div>
+
+<!-- VASCULAR MODAL -->
+<div class="modal" id="modal-vascular" role="dialog" aria-modal="true" aria-label="Vascular load">
+  <div class="modal-header vascular-modal-header">
+    <h2>Vascular Load Assessment</h2>
+    <button class="modal-close" data-close="modal-vascular" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="vascular-score-ring">
+      <svg viewBox="0 0 120 120" class="vascular-ring-svg">
+        <circle class="ring-bg" cx="60" cy="60" r="50"/>
+        <circle class="ring-fill-vascular" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="78"/>
+        <text x="60" y="56" class="ring-label-big" style="fill:#ff6ec7">75</text>
+        <text x="60" y="76" class="ring-sub-label">Good</text>
+      </svg>
+    </div>
+    <div class="vascular-detail-grid">
+      <div class="vd-item"><span class="vd-label">Arterial Elasticity</span><div class="vd-bar"><div class="vd-fill" style="width:72%;background:linear-gradient(90deg,#ff6ec7,#b24bef)"></div></div><span class="vd-val">72/100</span></div>
+      <div class="vd-item"><span class="vd-label">Blood Flow Rate</span><div class="vd-bar"><div class="vd-fill" style="width:88%;background:linear-gradient(90deg,#ff6ec7,#b24bef)"></div></div><span class="vd-val">88%</span></div>
+      <div class="vd-item"><span class="vd-label">Peripheral Resistance</span><div class="vd-bar"><div class="vd-fill" style="width:20%;background:linear-gradient(90deg,#00e5ff,#4a90ff)"></div></div><span class="vd-val">Low</span></div>
+      <div class="vd-item"><span class="vd-label">Pulse Wave Velocity</span><div class="vd-bar"><div class="vd-fill" style="width:65%;background:linear-gradient(90deg,#ff6ec7,#b24bef)"></div></div><span class="vd-val">6.5 m/s</span></div>
+    </div>
+    <button class="modal-action-btn vascular-action-btn">Schedule Detailed Scan</button>
+  </div>
+</div>
+
+<!-- SLEEP MODAL -->
+<div class="modal" id="modal-sleep" role="dialog" aria-modal="true" aria-label="Sleep analysis">
+  <div class="modal-header sleep-modal-header">
+    <div class="modal-icon-wrap sleep-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+    <h2>Sleep Analysis</h2>
+    <button class="modal-close" data-close="modal-sleep" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div style="text-align:center">
+      <div class="sleep-modal-big">7h 42m</div>
+      <p style="color:rgba(255,255,255,.5);margin:4px 0 16px">Last night · 11:10 PM → 6:52 AM</p>
+    </div>
+    <div class="chart-section">
+      <div class="modal-section-title">7-Day Sleep Duration</div>
+      <div class="chart-container" style="height:160px"><canvas id="sleep-chart"></canvas></div>
+    </div>
+    <div class="chart-section" style="margin-top:16px">
+      <div class="modal-section-title">Sleep Phase Distribution</div>
+      <div class="chart-container" style="height:200px"><canvas id="restless-chart"></canvas></div>
+    </div>
+    <div class="sleep-phase-breakdown" style="margin-top:12px">
+      <div class="spb-item"><div class="spb-dot deep"></div><span>Deep Sleep</span><strong>2h 18m</strong></div>
+      <div class="spb-item"><div class="spb-dot rem"></div><span>REM</span><strong>1h 42m</strong></div>
+      <div class="spb-item"><div class="spb-dot light"></div><span>Light Sleep</span><strong>3h 06m</strong></div>
+      <div class="spb-item"><div class="spb-dot awake"></div><span>Awake</span><strong>36m</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- HYDRATION MODAL -->
+<div class="modal" id="modal-hydration" role="dialog" aria-modal="true" aria-label="Hydration">
+  <div class="modal-header hydration-modal-header">
+    <div class="modal-icon-wrap hydration-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
+    <h2>Hydration Tracker</h2>
+    <button class="modal-close" data-close="modal-hydration" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="hydration-modal-info">
+      <span class="hmi-current" id="hmi-current">1.1L</span>
+      <span class="hmi-sep">/</span>
+      <span class="hmi-goal">2.0L</span>
+    </div>
+    <div class="hydration-modal-bar-wrap">
+      <div class="hydration-modal-bar"><div class="hydration-modal-fill" id="hydration-modal-fill" style="width:55%"></div></div>
+      <span id="hydration-pct">55%</span>
+    </div>
+    <div class="hydration-log" id="hydration-log">
+      <div class="hl-item"><span>☕ 8:00 AM</span><span>250 ml</span></div>
+      <div class="hl-item"><span>💧 10:30 AM</span><span>500 ml</span></div>
+      <div class="hl-item"><span>🍵 1:00 PM</span><span>350 ml</span></div>
+    </div>
+    <button class="modal-action-btn" onclick="window.addWaterFromModal()">+ Add 250 ml</button>
+  </div>
+</div>
+
+<!-- BED TELEMETRY MODAL -->
+<div class="modal modal-wide" id="modal-telemetry" role="dialog" aria-modal="true" aria-label="Bed telemetry">
+  <div class="modal-header telemetry-modal-header">
+    <div class="modal-icon-wrap telemetry-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 15z"/></svg></div>
+    <h2>Bed Telemetry — ESP32</h2>
+    <button class="modal-close" data-close="modal-telemetry" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body">
+    <!-- Orthostatic alert (hidden until triggered) -->
+    <div class="ortho-alert" id="tof-ortho-alert" style="display:none" role="alert">
+      <span>⚠️</span>
+      <div><strong>Orthostatic Hypotension Risk</strong><br>Rising quickly from bed — hold the bedside rail and wait 10 seconds.</div>
+    </div>
+    <!-- TOF status -->
+    <div class="tof-modal-status-wrap">
+      <div id="tof-modal-status" class="tof-modal-status">
+        <span class="tof-dot" style="background:#22c76c;box-shadow:0 0 8px #22c76c"></span>
+        <span>Lying Down</span>
+      </div>
+      <span class="tof-live-badge">● LIVE</span>
+    </div>
+    <!-- FSR 4×4 pressure grid -->
+    <div class="modal-section-title">FSR Pressure Matrix (4×4)</div>
+    <div class="fsr-modal-grid" id="fsr-modal-grid" aria-label="Pressure sensor matrix"></div>
+    <div class="fsr-legend">
+      <span class="fsr-leg-item"><span class="fsr-leg-dot" style="background:rgba(74,85,104,0.85)"></span>Empty</span>
+      <span class="fsr-leg-item"><span class="fsr-leg-dot" style="background:rgba(34,199,108,0.85)"></span>Low</span>
+      <span class="fsr-leg-item"><span class="fsr-leg-dot" style="background:rgba(255,193,7,0.85)"></span>Medium</span>
+      <span class="fsr-leg-item"><span class="fsr-leg-dot" style="background:rgba(255,140,66,0.85)"></span>High</span>
+      <span class="fsr-leg-item"><span class="fsr-leg-dot" style="background:rgba(255,71,87,0.85)"></span>Peak</span>
+    </div>
+    <p class="telemetry-tip">Updates every 1.5 seconds · Simulated ESP32 hardware data</p>
+  </div>
+</div>
+
+<!-- SCAN MODAL -->
+<div class="modal" id="modal-scan" role="dialog" aria-modal="true" aria-label="Health sensor scan">
+  <div class="modal-header scan-modal-header">
+    <h2>Health Sensor Scan</h2>
+    <button class="modal-close" data-close="modal-scan" aria-label="Close">✕</button>
+  </div>
+  <div class="modal-body" style="text-align:center">
+    <div class="scan-pulse" id="scan-pulse" aria-hidden="true">
+      <div class="scan-ripple"></div>
+      <div class="scan-ripple" style="animation-delay:.5s"></div>
+      <div class="scan-ripple" style="animation-delay:1s"></div>
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V5a2 2 0 0 1 2-2h4"/><path d="M21 9V5a2 2 0 0 0-2-2h-4"/><path d="M3 15v4a2 2 0 0 0 2 2h4"/><path d="M21 15v4a2 2 0 0 1-2 2h-4"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+    </div>
+    <p style="color:rgba(255,255,255,.7);margin:20px 0">Place your finger on the sensor to begin measurement.</p>
+    <button class="modal-action-btn scan-start-btn" id="scan-start-btn" onclick="window.startScan()">Start Scan</button>
+    <div class="scan-result" id="scan-result" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ══════════ YOUTUBE VIDEO MODAL ══════════ -->
+<div class="video-modal-overlay" id="video-modal-overlay" aria-hidden="true">
+  <div class="video-modal" id="video-modal" role="dialog" aria-modal="true" aria-label="Video player">
+    <button class="video-modal-close" id="video-modal-close" aria-label="Close video">✕</button>
+    <div class="video-modal-info" id="video-modal-info"></div>
+    <div class="video-iframe-wrap">
+      <iframe id="yt-iframe" src="" allow="autoplay; fullscreen; encrypted-media" allowfullscreen frameborder="0" title="Fitness video"></iframe>
+    </div>
+    <div class="video-modal-meta" id="video-modal-meta"></div>
+  </div>
+</div>
+
+<!-- ═══ MAIN MODULE ENTRY POINT ═══ -->
+<script type="module" src="app.js"></script>
+</body>
+</html>
