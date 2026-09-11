@@ -1529,3 +1529,20 @@ body {
 
 /* ── Header: ensure relative for dropdown ── */
 .app-header { position:relative; }
+
+/* ---- SCROLL FIXES & REMOVALS ---- */
+#app {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+#card-steps, #modal-scan, #nav-scan, .scan-btn, #nav-scan-btn, #modal-steps-count {
+  display: none !important;
+}
