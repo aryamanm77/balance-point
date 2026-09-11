@@ -3,7 +3,7 @@
    Cache-first for app shell · Network-first for Firebase/CDN
    ================================================================ */
 
-const CACHE_NAME = 'balancepoint-v5';
+const CACHE_NAME = 'balancepoint-v6';
 const CACHE_URLS = [
   './',
   './index.html',

@@ -6,6 +6,8 @@
 import {
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut as fbSignOut,
   onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
@@ -45,6 +47,10 @@ export function getCurrentUser() { return _currentUser; }
 
 /* ── Initialise auth observer ── */
 export function initAuth() {
+  getRedirectResult(auth).catch(err => {
+    handleAuthError(err);
+  });
+
   onAuthStateChanged(auth, async user => {
     hideLoading();
     if (user) {
@@ -58,13 +64,18 @@ export function initAuth() {
     }
   });
 
+  /* Profile Menu Setup */
+  const pBtn = document.getElementById('profile-btn');
+  pBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    profileDropdown()?.classList.toggle('open');
+  });
+
+  signoutBtn()?.addEventListener('click', signOutUser);
+
   /* Google sign-in button */
   googleBtn()?.addEventListener('click', signInWithGoogle);
 
-  /* Sign-out button */
-  signoutBtn()?.addEventListener('click', signOutUser);
-
-  /* Avatar → profile dropdown toggle */
   avatarBtn()?.addEventListener('click', e => {
     e.stopPropagation();
     profileDropdown()?.classList.toggle('open');
@@ -79,8 +90,7 @@ export async function signInWithGoogle() {
   setSignInLoading(true);
   clearLoginError();
   try {
-    await signInWithPopup(auth, provider);
-    /* onAuthStateChanged will fire and handle the rest */
+    await signInWithRedirect(auth, provider);
   } catch (err) {
     setSignInLoading(false);
     handleAuthError(err);
